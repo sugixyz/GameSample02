@@ -9,10 +9,18 @@ namespace
 	//タンクの前方向ベクトル
 	XMVECTOR vFront = { 0,0,1,0 };
 	const float MOVE_SPEED = 0.2;
+	enum CamType
+	{
+		FIXED_CAM, //固定カメラ
+		TPS_CAM, //３人称視点カメラ
+		TPS_CAMROT, //３人称視点カメラ（回転）
+		FPS_CAM, //一人称視点カメラ
+		CAM_TYPE_MAX
+	};
 }
 
 Tank::Tank(GameObject* parent)
-	:GameObject(parent,"Tank"),hModel_(-1)
+	:GameObject(parent,"Tank"),hModel_(-1),camType_(FIXED_CAM)
 {
 }
 
@@ -28,6 +36,24 @@ void Tank::Initialize()
 
 void Tank::Update()
 {
+	if (Input::IsKeyDown(DIK_C))
+	{
+		//カメラの切り替え
+		camType_ = (camType_ + 1) % CAM_TYPE_MAX;
+	}
+	switch (camType_)
+	{
+	case FIXED_CAM:
+		break;
+	case TPS_CAM:
+		break;
+	case TPS_CAMROT:
+		break;
+	case FPS_CAM:
+		break;
+	}
+
+
 	if (Input::IsKey(DIK_D) || Input::IsKey(DIK_RIGHT))
 	{
 		transform_.rotate_.y += 2;
@@ -37,8 +63,8 @@ void Tank::Update()
 		transform_.rotate_.y -= 2;
 	}
 
-	Debug::Log("Yangle = ");
-	Debug::Log(transform_.rotate_.y, true); //後のtrueは改行の有無
+	Debug::Log("CAMTYPE = ");
+	Debug::Log(camType_, true); //後のtrueは改行の有無
 
 	if (Input::IsKey(DIK_W) || Input::IsKey(DIK_UP))
 	{

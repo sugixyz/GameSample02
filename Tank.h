@@ -21,6 +21,6 @@ public:
 private:
 	//戦車モデルのハンドル
 	int hModel_;
-private:
-	XMFLOAT3 Normalize(XMFLOAT3);
+	//カメラの種類
+	int camType_;
 };

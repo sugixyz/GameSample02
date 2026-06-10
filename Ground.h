@@ -18,6 +18,8 @@ public:
 	void Draw() override;
 	//開放
 	void Release() override;
+	//モデルのハンドルを取得
+	int GetModelHandle() { return hModel_; }
 private:
 	//地面モデルのハンドル
 	int hModel_;

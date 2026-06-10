@@ -1,6 +1,15 @@
 #include "Tank.h"
 #include"Engine/Model.h"
 #include"Engine/Input.h"
+#include"Engine/Debug.h"
+#include"Ground.h"
+
+namespace
+{
+	//タンクの前方向ベクトル
+	XMVECTOR vFront = { 0,0,1,0 };
+	const float MOVE_SPEED = 0.2;
+}
 
 Tank::Tank(GameObject* parent)
 	:GameObject(parent,"Tank"),hModel_(-1)
@@ -27,18 +36,33 @@ void Tank::Update()
 	{
 		transform_.rotate_.y -= 2;
 	}
+
+	Debug::Log("Yangle = ");
+	Debug::Log(transform_.rotate_.y, true); //後のtrueは改行の有無
+
 	if (Input::IsKey(DIK_W) || Input::IsKey(DIK_UP))
 	{
-		float radY = XMConvertToRadians(transform_.rotate_.y);
-		XMFLOAT3 dir = XMFLOAT3(sinf(radY), 0.0f, cosf(radY));
-		transform_.position_.x += dir.x;
-		transform_.position_.z += dir.z;
-
+		XMVECTOR vPos = XMLoadFloat3(&transform_.position_); //ロード：読み込み
 		XMMATRIX mRotY = XMMatrixRotationY(XMConvertToRadians(transform_.rotate_.y));
-		XMMATRIX mtra
-		
+		XMVECTOR vMove = XMVector3TransformCoord(vFront, mRotY);
+
+		vPos = vPos + MOVE_SPEED * vMove;
+		XMStoreFloat3(&transform_.position_, vPos); //ストア：書き込み（格納）
 	}
 
+	//レイキャストして、浮いてたら地面まで落とす
+	RayCastData data;
+	data.start = transform_.position_;
+	data.start.y = 0.0f;  //レイを一定の高さから落とす
+	data.dir = { 0,-1,0 }; //真下にレイを飛ばす
+	Ground* g = (Ground*)FindObject("Ground");
+	int hGourndModel = g->GetModelHandle();
+	Model::RayCast(hGourndModel, &data);
+
+	if (data.hit)
+	{
+		transform_.position_.y = -data.dist;
+	}
 
 }
 

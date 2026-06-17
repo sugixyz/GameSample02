@@ -3,6 +3,8 @@
 #include"Engine/Input.h"
 #include"Engine/Debug.h"
 #include"Ground.h"
+#include"Engine/Camera.h"
+#include"TankHead.h"
 
 namespace
 {
@@ -17,6 +19,11 @@ namespace
 		FPS_CAM, //一人称視点カメラ
 		CAM_TYPE_MAX
 	};
+	//カメラの高さのバイアス
+	const float FPS_HEIGHT_BIAS = 0.2f;
+
+	const float TPS_HEIGHT_BIAS = 4.0f;
+	const float TPS_FRONT_BIAS = 6.0f;
 }
 
 Tank::Tank(GameObject* parent)
@@ -32,10 +39,15 @@ void Tank::Initialize()
 {
 	hModel_ = Model::Load("TankBody.fbx");
 	assert(hModel_ >= 0);
+	Instantiate<TankHead>(this);
 }
 
 void Tank::Update()
 {
+	XMVECTOR vPos = XMLoadFloat3(&transform_.position_); //ロード：読み込み
+	XMMATRIX mRotY = XMMatrixRotationY(XMConvertToRadians(transform_.rotate_.y));
+	XMVECTOR vMove = XMVector3TransformCoord(vFront, mRotY);
+
 	if (Input::IsKeyDown(DIK_C))
 	{
 		//カメラの切り替え
@@ -44,21 +56,50 @@ void Tank::Update()
 	switch (camType_)
 	{
 	case FIXED_CAM:
+		SetFixedCam();
 		break;
 	case TPS_CAM:
+	{
+		//自分の位置に
+		XMFLOAT3 camPos = transform_.position_;
+		camPos.y = camPos.y + TPS_HEIGHT_BIAS;
+		camPos.z = camPos.z - TPS_FRONT_BIAS;
+		Camera::SetPosition(camPos);
+		XMFLOAT3 camTarget;
+		XMStoreFloat3(&camTarget, vPos + vMove);
+		Camera::SetTarget(camTarget);
+	}
 		break;
 	case TPS_CAMROT:
+	{
+		//自分の位置に
+		XMFLOAT3 camPos;
+		XMVECTOR vCam = { 0.0f,TPS_HEIGHT_BIAS,-TPS_FRONT_BIAS,0.0f };
+		vCam = XMVector3TransformCoord(vCam, mRotY);
+		XMStoreFloat3(&camPos, vPos + vCam);
+		Camera::SetPosition(camPos);
+		XMFLOAT3 camTarget;
+		XMStoreFloat3(&camTarget, vPos + vMove);
+		Camera::SetTarget(camTarget);
+	}
 		break;
 	case FPS_CAM:
+		//自分の位置に
+		XMFLOAT3 camPos = transform_.position_;
+		camPos.y = camPos.y + FPS_HEIGHT_BIAS;
+		Camera::SetPosition(camPos);
+		XMFLOAT3 camTarget;
+		XMStoreFloat3(&camTarget,vPos + vMove);
+		Camera::SetTarget(camTarget);
 		break;
 	}
 
 
-	if (Input::IsKey(DIK_D) || Input::IsKey(DIK_RIGHT))
+	if (Input::IsKey(DIK_D))
 	{
 		transform_.rotate_.y += 2;
 	}
-	if (Input::IsKey(DIK_A) || Input::IsKey(DIK_LEFT))
+	if (Input::IsKey(DIK_A))
 	{
 		transform_.rotate_.y -= 2;
 	}
@@ -66,11 +107,8 @@ void Tank::Update()
 	Debug::Log("CAMTYPE = ");
 	Debug::Log(camType_, true); //後のtrueは改行の有無
 
-	if (Input::IsKey(DIK_W) || Input::IsKey(DIK_UP))
+	if (Input::IsKey(DIK_W))
 	{
-		XMVECTOR vPos = XMLoadFloat3(&transform_.position_); //ロード：読み込み
-		XMMATRIX mRotY = XMMatrixRotationY(XMConvertToRadians(transform_.rotate_.y));
-		XMVECTOR vMove = XMVector3TransformCoord(vFront, mRotY);
 
 		vPos = vPos + MOVE_SPEED * vMove;
 		XMStoreFloat3(&transform_.position_, vPos); //ストア：書き込み（格納）
@@ -99,6 +137,24 @@ void Tank::Draw()
 }
 
 void Tank::Release()
+{
+}
+
+void Tank::SetFixedCam()
+{
+	Camera::SetTarget(XMFLOAT3(0, 0, 0));
+	Camera::SetPosition(XMFLOAT3(0, 20, -30));
+}
+
+void Tank::SetTPSCam()
+{
+}
+
+void Tank::SetTPSCamRot()
+{
+}
+
+void Tank::SetFPSCam()
 {
 }
 

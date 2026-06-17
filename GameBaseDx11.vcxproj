@@ -151,6 +151,7 @@
     <ClCompile Include="Ground.cpp" />
     <ClCompile Include="PlayScene.cpp" />
     <ClCompile Include="Tank.cpp" />
+    <ClCompile Include="TankHead.cpp" />
     <ClCompile Include="TestScene.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -180,6 +181,7 @@
     <ClInclude Include="Ground.h" />
     <ClInclude Include="PlayScene.h" />
     <ClInclude Include="Tank.h" />
+    <ClInclude Include="TankHead.h" />
     <ClInclude Include="TestScene.h" />
   </ItemGroup>
   <ItemGroup>

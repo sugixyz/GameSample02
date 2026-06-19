@@ -16,4 +16,6 @@ public:
 	void Draw() override;
 	//開放
 	void Release() override;
+private:
+	float createCounter;
 };

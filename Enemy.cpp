@@ -20,8 +20,10 @@ void Enemy::Initialize()
 
 	hModel_ = Model::Load("Enemy.fbx");
 	assert(hModel_ >= 0);
+	//モデルハンドル、開始フレーム、終了フレーム、アニメーション速度
+	Model::SetAnimFrame(hModel_, 1, 100, 1.0f);
 
-	SphereCollider* collider = new SphereCollider(XMFLOAT3(0.0f, 0.0f, 0.0f), 2.0f);
+	SphereCollider* collider = new SphereCollider(XMFLOAT3(0.0f, 0.0f, 0.0f), 1.0f);
 	AddCollider(collider);
 }
 

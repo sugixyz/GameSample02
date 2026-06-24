@@ -22,8 +22,10 @@ namespace
 	//カメラの高さのバイアス
 	const float FPS_HEIGHT_BIAS = 0.2f;
 
-	const float TPS_HEIGHT_BIAS = 4.0f;
-	const float TPS_FRONT_BIAS = 6.0f;
+	const float TPS_HEIGHT_BIAS = 5.0f;
+	const float TPS_FRONT_BIAS = 8.0f;
+
+	const float RadToDeg = 180 / 3.14159265358;
 }
 
 Tank::Tank(GameObject* parent)
@@ -45,8 +47,10 @@ void Tank::Initialize()
 void Tank::Update()
 {
 	XMVECTOR vPos = XMLoadFloat3(&transform_.position_); //ロード：読み込み
+	XMMATRIX mRotX = XMMatrixRotationX(XMConvertToRadians(transform_.rotate_.x));
 	XMMATRIX mRotY = XMMatrixRotationY(XMConvertToRadians(transform_.rotate_.y));
-	XMVECTOR vMove = XMVector3TransformCoord(vFront, mRotY);
+	XMMATRIX mRotZ = XMMatrixRotationZ(XMConvertToRadians(transform_.rotate_.z));
+	XMVECTOR vMove = XMVector3TransformCoord(vFront, mRotZ * mRotX * mRotY);
 
 	if (Input::IsKeyDown(DIK_C))
 	{

@@ -29,7 +29,7 @@ void TankHead::Update()
 		transform_.rotate_.y -= 2;
 	}
 
-	if (Input::IsKey(DIK_SPACE))
+	if (Input::IsKeyDown(DIK_SPACE))
 	{
 		//タンクヘッドのTopというボーンの位置を取得	
 		XMFLOAT3 cannonTop = Model::GetBonePosition(hModel_, "Top");

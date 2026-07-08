@@ -598,12 +598,20 @@ void FbxParts::RayCast(RayCastData * data)
 			float dist = 0.0f;
 
 			hit = Direct3D::Intersect(data->start, data->dir, ver[0], ver[1], ver[2], &dist);
-
+			XMVECTOR v0 = XMLoadFloat3(&ver[0]);
+			XMVECTOR v1 = XMLoadFloat3(&ver[1]);
+			XMVECTOR v2 = XMLoadFloat3(&ver[2]);
+			XMVECTOR a, b;
+			a = v1 - v0;
+			b = v2 - v0;
+			XMFLOAT3 no;
+			XMStoreFloat3(&no, XMVector3Normalize(XMVector3Cross(a, b)));
 
 			if (hit && dist < data->dist)
 			{
 				data->hit = TRUE;
 				data->dist = dist;
+				data->normal = no;
 			}
 		}
 	}

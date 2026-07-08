@@ -137,6 +137,9 @@ void Tank::Update()
 	if (data.hit)
 	{
 		transform_.position_.y = -data.dist;
+		XMFLOAT3 normal = data.normal;
+		transform_.rotate_.z = atan2f(normal.y, normal.x);
+		transform_.rotate_.x = atan2f(-normal.y, normal.z);
 	}
 
 }
@@ -168,4 +171,3 @@ void Tank::SetTPSCamRot()
 void Tank::SetFPSCam()
 {
 }
-

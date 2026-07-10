@@ -138,8 +138,8 @@ void Tank::Update()
 	{
 		transform_.position_.y = -data.dist;
 		XMFLOAT3 normal = data.normal;
-		transform_.rotate_.z = atan2f(normal.y, normal.x);
-		transform_.rotate_.x = atan2f(-normal.y, normal.z);
+		transform_.rotate_.x = atan2f(normal.z, normal.y) * RadToDeg;
+		transform_.rotate_.z = atan2f(normal.x, normal.y) * RadToDeg;
 	}
 
 }

@@ -1,7 +1,9 @@
-#include "PlayScene.h"
+﻿#include "PlayScene.h"
 #include"Ground.h"
 #include"Tank.h"
 #include"Enemy.h"
+#include"Engine/Input.h"
+#include"Engine/SceneManager.h"
 
 PlayScene::PlayScene(GameObject* parent)
 	:GameObject(parent,"PlayScene"),createCounter(0.0f)
@@ -24,6 +26,12 @@ void PlayScene::Update()
 	{
 		Instantiate<Enemy>(this);
 		createCounter = 0;
+	}
+
+	if (Input::IsKeyDown(DIK_RETURN))
+	{
+		SceneManager* sceneManager = (SceneManager*)(this->GetParent());
+		sceneManager->ChangeScene(SCENE_ID_RESULT);
 	}
 }
 
